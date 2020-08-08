@@ -19,16 +19,36 @@ app.get('/', (req, res) => {
 });
 
 app.post('/store', (req, res) => {
-    console.log("req.body: "+JSON.stringify(req.body));
     var username = req.get('X-User-Email');
     var token = req.get('X-User-Token');
-    console.log("username: "+username);
-    console.log("token: "+token);
     var createStorePromise = vexService.createStore(req.body, username, token);
     createStorePromise.then(function(result){
         res.json(result);
     }).catch(function(err){
         res.status(400).send(err);
+    });
+});
+
+app.get('/users/search', (req, res) => {
+    var username = req.get('X-User-Email');
+    var token = req.get('X-User-Token');
+    var email = req.query.email;
+    var findUserPromise = vexService.findUser(email, username, token);
+    findUserPromise.then(function(result){
+        res.json(result);
+    }).catch(function(err){
+        res.status(400).send(err);
+    });
+});
+
+app.get('/template', (req, res) => {
+    var name = req.query.name;
+    var escape = req.query.escape;
+    var getTemplatePromise = vexService.getTemplate(name, escape);
+    getTemplatePromise.then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        res.send(err);
     });
 });
 
